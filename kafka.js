@@ -11,7 +11,16 @@ module.exports = function(RED) {
     function kafkaNode(config) {
         RED.nodes.createNode(this,config);
         var topic = config.topic;
-        var clusterZookeeper = config.zkquorum;
+        var clusterZookeeper = "nothin yet";
+        var zkquorum = config.zkquorum;
+        var zkquorumType = config.zkquorumType;
+        if (zkquorumType == 'str'){
+            clusterZookeeper = zkquorum
+        }
+        if (zkquorumType == 'global' || zkquorumType == 'flow' ){
+            clusterZookeeper = RED.util.evaluateNodeProperty(zkquorum,zkquorumType,this)
+            console.log(clusterZookeeper)
+        }
         var debug = (config.debug == "debug");
         var node = this;
         var kafka = require('kafka-node');
@@ -70,7 +79,16 @@ module.exports = function(RED) {
         var HighLevelConsumer = kafka.HighLevelConsumer;
         var Client = kafka.Client;
         var topics = String(config.topics);
-        var clusterZookeeper = config.zkquorum;
+        var clusterZookeeper = 'nothin yet';
+        var zkquorum = config.zkquorum;
+        var zkquorumType = config.zkquorumType;
+        if (zkquorumType == 'str'){
+            clusterZookeeper = zkquorum
+        }
+        if (zkquorumType == 'global' || zkquorumType == 'flow' ) {
+            clusterZookeeper = RED.util.evaluateNodeProperty(zkquorum, zkquorumType,this)
+            console.log(clusterZookeeper)
+        }
         var groupId = config.groupId;
         var debug = (config.debug == "debug");
         var client = new Client(clusterZookeeper);

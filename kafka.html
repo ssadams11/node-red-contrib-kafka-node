@@ -3,26 +3,54 @@
         category: 'output',
         color: '#FFFFFF',
         defaults: {
-            zkquorum:{value:"", required: true},
+            zkquorum: {value:"", validate:function(v) {
+                var ptype = $("#node-input-zkquorumType").val() || this.zkquorumType;
+                if (ptype === 'flow' || ptype === 'global' ) {
+                    return /^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]+)*/i.test(v);
+                }
+                return true;
+            }},
+            zkquorumType: {value:"str"},
+
             topics: {value:"", required: true},
-            debug: {value:""}
+            debug: {value:"str"}
         },
         inputs:1,
         outputs:0,
         icon: "kafka.png",
         align: "right",
+        oneditprepare: function() {
+            if (this.zkquorumType == null) {
+                if (this.zkquorum == "") {
+                    this.zkquorumType = "str";
+                }
+            } else if (this.zkquorumType === 'string' || this.zkquorumType === 'none') {
+                this.zkquorumType = "str";
+            }
+            $("#node-input-zkquorumType").val(this.zkquorumType);
+            $("#node-input-zkquorum").typedInput({
+                default: 'str',
+                typeField: $("#node-input-zkquorumType"),
+                types: ['flow', 'global', 'str']
+            });
+            },
         label: function() {
-            return this.name||"kafka";
-        }
+            if (this.zkquorumType === 'flow' && this.zkquorum.length < 19) {
+                return 'kafka flow.'+this.zkquorum;
+            } else if (this.zkquorumType === 'global' && this.zkquorum.length < 17) {
+                return 'kafka global.'+this.zkquorum;
+            } else {
+                return this.name||"kafka";
+            }}
     });
 </script>
 
 <script type="text/x-red" data-template-name="kafka">
-    <div class="form-row">
-        <label for="node-input-zkquorum"><i class="icon-tag"></i>ZK Quorum</label>
-        <input type="text" id="node-input-zkquorum" placeholder="ZK Quorum">
+     <div class="form-row">
+        <label for="node-input-payload"><i class="fa fa-envelope"></i>ZK Quorum</label>
+        <input type="text" id="node-input-zkquorum" style="width:70%">
+        <input type="hidden" id="node-input-zkquorumType">
     </div>
-
     <div class="form-row">
         <label for="node-input-topics"><i class="icon-tag"></i>Topic(s)</label>
         <input type="text" id="node-input-topics" placeholder="Topics">
@@ -53,7 +81,15 @@ Topic(s) = "topic1, topic2, topic3"
         category: 'input',
         color: '#FFFFFF',
         defaults: {
-            zkquorum:{value:"", required: true},
+            zkquorum: {value:"", required: true, validate:function(v) {
+                var ptype = $("#node-input-zkquorumType").val() || this.zkquorumType;
+                if (ptype === 'flow' || ptype === 'global' ) {
+                    return /^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]+)*/i.test(v);
+                }
+                return true;
+            }},
+            zkquorumType: {value:"str"},
+
             topics: {value:"", required: true},
             groupId:{value:"", required: true},
             debug: {value:""},
@@ -62,18 +98,38 @@ Topic(s) = "topic1, topic2, topic3"
         inputs:0,
         outputs:1,
         icon: "kafka.png",
+        oneditprepare: function() {
+            if (this.zkquorumType == null) {
+                if (this.zkquorum == "") {
+                    this.zkquorumType = "str";
+                }
+            } else if (this.zkquorumType === 'string' || this.zkquorumType === 'none') {
+                this.zkquorumType = "str";
+            }
+            $("#node-input-zkquorumType").val(this.zkquorumType);
+            $("#node-input-zkquorum").typedInput({
+                default: 'str',
+                typeField: $("#node-input-zkquorumType"),
+                types: ['flow', 'global', 'str']
+            });
+        },
         label: function() {
+            if (this.zkquorumType === 'flow' && this.zkquorum.length < 19) {
+                return 'kafka flow.'+this.zkquorum;
+            } else if (this.zkquorumType === 'global' && this.zkquorum.length < 17) {
+                return 'kafka global.'+this.zkquorum;
+            } else {
             return this.name||"kafka";
-        }
+        }}
     });
 </script>
 
 <script type="text/x-red" data-template-name="kafka in">
-    <div class="form-row">
-        <label for="node-input-zkquorum"><i class="icon-tag"></i>ZK Quorum</label>
-        <input type="text" id="node-input-zkquorum" placeholder="ZK Quorum">
+     <div class="form-row">
+        <label for="node-input-payload"><i class="fa fa-envelope"></i>ZK Quorum</label>
+        <input type="text" id="node-input-zkquorum" style="width:70%">
+        <input type="hidden" id="node-input-zkquorumType">
     </div>
-
     <div class="form-row">
         <label for="node-input-topics"><i class="icon-tag"></i>Topic(s)</label>
         <input type="text" id="node-input-topics" placeholder="Topic">
