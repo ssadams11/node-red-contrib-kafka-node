@@ -115,9 +115,9 @@ Topic(s) = "topic1, topic2, topic3"
         },
         label: function() {
             if (this.zkquorumType === 'flow' && this.zkquorum.length < 19) {
-                return 'kafka flow.'+this.zkquorum;
+                return this.name||'kafka flow.'+this.zkquorum;
             } else if (this.zkquorumType === 'global' && this.zkquorum.length < 17) {
-                return 'kafka global.'+this.zkquorum;
+                return this.name||'kafka global.'+this.zkquorum;
             } else {
             return this.name||"kafka";
         }}
